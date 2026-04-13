@@ -18,7 +18,7 @@ def main():
         extract_taxi_csv_to_parquet()
         
         # 3. CAMADA SILVER (Limpeza, Deduplicação, Feature Engineering e Carga no Postgres via JDBC)
-        print("\nExecutando transformação para Camada Silver e Carga SQL...")
+        print("\nExecutando transformação para Camada Silver e Carga no PostgreSQL...")
         transform_bronze_to_silver()
 
     except Exception as e:

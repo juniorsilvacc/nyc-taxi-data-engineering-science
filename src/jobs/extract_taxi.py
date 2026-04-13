@@ -38,7 +38,6 @@ def extract_taxi_csv_to_parquet():
         print("Convertendo e salvando em Parquet na camada Bronze...")
         
         # Salvando em Parquet
-        #df_raw.write.mode("overwrite").parquet(output_path)
         df_raw.repartition(50).write.mode("overwrite").parquet(output_path)
         
         print(f"\n✅ PROCESSO CONCLUÍDO COM SUCESSO!")

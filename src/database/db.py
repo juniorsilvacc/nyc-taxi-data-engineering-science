@@ -35,4 +35,4 @@ def get_engine():
             print(f"DEBUG: O erro real é: {e}")
             time.sleep(retry_interval)
             
-    raise Exception("❌ Erro: Não foi possível conectar ao banco de dados após várias tentativas.")
+    raise Exception("Erro: Não foi possível conectar ao banco de dados após várias tentativas.")
