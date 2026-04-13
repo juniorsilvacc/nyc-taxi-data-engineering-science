@@ -1,18 +1,25 @@
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
+from src.database.postgres_to_load import load_silver_to_postgres
 import os
 
 def transform_bronze_to_silver():
+    """
+    Realiza a limpeza, padronização, pré-processamento e faz a carga no Postgres via JDBC.
+    """
+    
     base_path = os.getcwd()
     input_path = os.path.join(base_path, "data/bronze/nyc_taxi")
     output_path = os.path.join(base_path, "data/silver/nyc_taxi")
-
+    
     spark = SparkSession.builder \
         .appName("NYC_Taxi_Silver_Transformation") \
-        .config("spark.driver.memory", "8g") \
-        .config("spark.executor.memory", "8g") \
-        .config("spark.sql.shuffle.partitions", "20") \
-        .config("spark.default.parallelism", "10") \
+        .config("spark.driver.memory", "4g") \
+        .config("spark.executor.memory", "4g") \
+        .config("spark.memory.offHeap.enabled", "true") \
+        .config("spark.memory.offHeap.size", "2g") \
+        .config("spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version", "2") \
+        .config("spark.sql.shuffle.partitions", "200") \
         .getOrCreate()
 
     print(f"Lendo dados da Bronze em: {input_path}")
@@ -61,15 +68,14 @@ def transform_bronze_to_silver():
 
         # 6. Salvando na Silver com particionamento
         print(f"Gravando dados na Silver em: {output_path}")
+        df_silver.repartition(100).write.mode("overwrite").parquet(output_path)
         
-        df_silver.coalesce(5).write.mode("overwrite").parquet(output_path)
+        # 7. Carga para o Banco de Dados (PostgreSQL)
+        load_silver_to_postgres(df_silver)
         
-        print("Camada Silver concluída com sucesso!")
+        print("✅ Camada Silver concluída com sucesso!")
 
     except Exception as e:
         print(f"Erro na transformação Silver: {e}")
     finally:
         spark.stop()
-
-if __name__ == "__main__":
-    transform_bronze_to_silver()

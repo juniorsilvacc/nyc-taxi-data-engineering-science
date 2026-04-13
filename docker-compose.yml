@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:15
+    container_name: nyc_taxi_container
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  etl:
+    build: .
+    container_name: etl_app_container
+    deploy:
+      resources:
+        limits:
+          memory: 10G
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - ./postgresql-42.7.2.jar:/usr/local/lib/python3.12/site-packages/pyspark/jars/postgresql-42.7.2.jar
+
+volumes:
+  pgdata:

@@ -9,12 +9,12 @@ def extract_taxi_csv_to_parquet():
     base_path = os.getcwd()
     input_path = os.path.join(base_path, "data/raw")
     output_path = os.path.join(base_path, "data/bronze/nyc_taxi")
-
+        
     spark = SparkSession.builder \
         .appName("NYC_Taxi_Bronze_Ingestion") \
         .config("spark.executor.memory", "4g") \
         .config("spark.driver.memory", "4g") \
-        .config("spark.sql.parquet.compression.codec", "snappy") \
+        .config("spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version", "2") \
         .getOrCreate()
 
     print(f"\n{'='*50}")
@@ -33,22 +33,19 @@ def extract_taxi_csv_to_parquet():
 
         print("Calculando volume de registros (isso pode levar alguns minutos)...")
         total_rows = df_raw.count()
-        print(f"Sucesso! {total_rows:,} registros encontrados.")
+        print(f"✅ Sucesso! {total_rows:,} registros encontrados.")
 
         print("Convertendo e salvando em Parquet na camada Bronze...")
         
         # Salvando em Parquet
-        df_raw.write.mode("overwrite").parquet(output_path)
+        #df_raw.write.mode("overwrite").parquet(output_path)
+        df_raw.repartition(50).write.mode("overwrite").parquet(output_path)
         
-        print(f"\n✔ PROCESSO CONCLUÍDO COM SUCESSO!")
+        print(f"\n✅ PROCESSO CONCLUÍDO COM SUCESSO!")
         print(f"Os dados estão prontos na pasta: {output_path}")
 
     except Exception as e:
         print(f"\nERRO DURANTE O PROCESSAMENTO:")
         print(str(e))
-        # find data/raw -name '*Zone.Identifier*' -delete
     finally:
         spark.stop()
-
-if __name__ == "__main__":
-    extract_taxi_csv_to_parquet()
