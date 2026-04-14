@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: dbt_dw
+    database: "nyc_taxi_db"
+    schema: public
+    tables:
+      - name: nyc_taxi_etl

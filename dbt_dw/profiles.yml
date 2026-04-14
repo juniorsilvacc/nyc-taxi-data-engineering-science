@@ -1,0 +1,12 @@
+dbt_dw:
+  outputs:
+    dev:
+      type: postgres
+      dbname: nyc_taxi_db
+      host: "{{ env_var('DB_HOST', 'localhost') }}"
+      user: postgres
+      pass: postgres
+      port: 5432
+      schema: public
+      threads: 4
+  target: dev
