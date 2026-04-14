@@ -28,15 +28,30 @@ def transform_bronze_to_silver():
         df_bronze = spark.read.parquet(input_path)
 
         # 1. Padronização de nomes, Tipagem e Tratamento de Nulos...
-        df_silver = df_bronze.select(
+        df_silver = df_bronze.select(  
+            # Identificadores
             F.col("VendorID").cast("int").alias("vendor_id"),
+            F.col("RateCodeID").cast("int").alias("rate_code_id"),
+            F.col("payment_type").cast("int").alias("payment_type_id"),
+            
+            # Timestamps
             F.to_timestamp(F.col("tpep_pickup_datetime"), "yyyy-MM-dd HH:mm:ss").alias("pickup_datetime"),
             F.to_timestamp(F.col("tpep_dropoff_datetime"), "yyyy-MM-dd HH:mm:ss").alias("dropoff_datetime"),
-            F.coalesce(F.col("passenger_count").cast("int"), F.lit(1)).alias("passenger_count"), # Se nulo, assume 1
+            
+            # Métricas Quantitativas
+            F.coalesce(F.col("passenger_count").cast("int"), F.lit(1)).alias("passenger_count"),
             F.col("trip_distance").cast("double").alias("trip_distance"),
             F.col("fare_amount").cast("double").alias("fare_amount"),
             F.col("tip_amount").cast("double").alias("tip_amount"),
-            F.col("total_amount").cast("double").alias("total_amount")
+            F.col("total_amount").cast("double").alias("total_amount"),
+            
+            # Colunas de Localização
+            F.col("pickup_longitude").cast("double").alias("pickup_longitude"),
+            F.col("pickup_latitude").cast("double").alias("pickup_latitude"),
+            F.col("dropoff_longitude").cast("double").alias("dropoff_longitude"),
+            F.col("dropoff_latitude").cast("double").alias("dropoff_latitude"),
+
+            ((F.unix_timestamp("tpep_dropoff_datetime") - F.unix_timestamp("tpep_pickup_datetime")) / 60).alias("trip_duration_minutes")
         )
         
         # 2. Deduplicação
@@ -51,7 +66,8 @@ def transform_bronze_to_silver():
             (F.col("total_amount") > 0) & 
             (F.col("trip_distance") > 0) &
             (F.col("pickup_datetime").isNotNull()) &
-            (F.col("dropoff_datetime") > F.col("pickup_datetime"))
+            (F.col("dropoff_datetime") > F.col("pickup_datetime")) &
+            (F.col("total_amount") >= 0) & (F.col("pickup_datetime").isNotNull())
         )
         
         # 4. Feature Engineering (Criação de Colunas de Tempo)
