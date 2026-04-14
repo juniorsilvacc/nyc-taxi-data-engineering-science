@@ -2,6 +2,8 @@
 
 Este projeto demonstra a construção de um pipeline de dados de ponta a ponta, processando mais de **46 milhões de registros** do dataset público de Taxi de Nova York (NYC Taxi). O objetivo principal é transformar dados brutos (Bronze) em uma camada analítica altamente otimizada (Gold) utilizando o padrão **Star Schema**.
 
+---
+
 ## 🛠️ Stack Tecnológica
 
 * **Linguagem:** Python & SQL
@@ -11,22 +13,28 @@ Este projeto demonstra a construção de um pipeline de dados de ponta a ponta, 
 * **Infraestrutura:** WSL2 (Ubuntu), Docker & Docker Compose
 * **Documentação:** dbt Docs & Excalidraw
 
+---
+
 ## 🏗️ Arquitetura do Projeto
 
 <img width="1750" height="874" alt="Image" src="https://github.com/juniorsilvacc/nyc-taxi-data-engineering-science/blob/master/assets/arquitetura.png" />
 
+---
+
+## 🧱 Demonstração da Linhagem (Lineage Graph)
+
+<img width="1750" height="874" alt="Image" src="https://github.com/juniorsilvacc/nyc-taxi-data-engineering-science/blob/master/assets/lineage-graph.png" />
+
+---
+
+## 🏛️ Medallion Architecture
 O projeto segue a **Medallion Architecture**, garantindo qualidade e governança em cada etapa:
 
 1.  **Bronze (Raw):** Dados brutos ingeridos de arquivos CSV/Parquet.
 2.  **Silver (Cleaned):** Processamento com **PySpark** para limpeza, tipagem, filtragem de outliers (ex: `total_amount > 0`) e cálculos de duração (`trip_duration_minutes`).
 3.  **Gold (Marts):** Modelagem dimensional no **dbt** transformando a camada Silver em um **Star Schema** otimizado para BI.
 
-## 🧱 Demonstração da Linhagem (Lineage)
-A rastreabilidade dos dados é garantida pelo dbt, permitindo visualizar desde as fontes (sources) até os data marts finais.
-
-<img width="1750" height="874" alt="Image" src="https://github.com/juniorsilvacc/nyc-taxi-data-engineering-science/blob/master/assets/lineage-graph.png" />
-
----
+--- 
 
 ## 🌌 Modelagem Dimensional (Star Schema)
 
@@ -88,11 +96,15 @@ dbt_dw/
     dbt test
     ```
 
+---
+
 ## 📊 Resultados e Performance
 
 * **Volume Processado:** 46.942.600 de linhas.
 * **Tempo de Processamento Gold:** ~50 segundos para consolidar a tabela fato no PostgreSQL.
 * **Data Quality:** Implementação de testes de `not_null`, `accepted_values` e validações customizadas via `schema.yml`.
+
+---
 
 ## 📈 Insights Possíveis
 Com esta modelagem, é possível analisar:
