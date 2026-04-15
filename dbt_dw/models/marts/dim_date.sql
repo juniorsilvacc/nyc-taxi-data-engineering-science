@@ -7,5 +7,8 @@ select
     extract(year from date_day) as year,
     extract(month from date_day) as month,
     to_char(date_day, 'Day') as day_name,
-    case when extract(dow from date_day) in (0, 6) then 'Weekend' else 'Weekday' end as day_type
+    case 
+        when extract(dow from date_day) in (0, 6) then 1 
+        else 0 
+    end as is_weekend
 from dates
