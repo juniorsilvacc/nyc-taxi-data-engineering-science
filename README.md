@@ -80,6 +80,38 @@ dbt_dw/
 
 ---
 
+# 📊 Visualização de Demanda (Heatmaps 3D)
+Utilizamos o Streamlit e Pydeck para mapear a densidade de coletas em Manhattan. A visualização permite identificar zonas de alta demanda por turno, auxiliando na compreensão do comportamento urbano de Nova York.
+
+## Densidade por Turno
+
+Manhã
+<img width="1750" height="874" alt="Image" src="https://github.com/juniorsilvacc/nyc-taxi-data-engineering-science/blob/master/assets/densidade-manha.png" />
+
+Tarde
+<img width="1750" height="874" alt="Image" src="https://github.com/juniorsilvacc/nyc-taxi-data-engineering-science/blob/master/assets/densidade-tarde.png" />
+
+Noite
+<img width="1750" height="874" alt="Image" src="https://github.com/juniorsilvacc/nyc-taxi-data-engineering-science/blob/master/assets/densidade-noite.png" />
+
+Madrugada
+<img width="1750" height="874" alt="Image" src="https://github.com/juniorsilvacc/nyc-taxi-data-engineering-science/blob/master/assets/densidade-madrugada.png" />
+
+- Insight: As visualizações em 3D (Hexagon Layer) mostram claramente o deslocamento do tráfego financeiro durante o dia e a concentração em zonas de entretenimento durante a noite.
+
+--- 
+
+# 🤖 Modelagem Preditiva
+Construímos um regressor utilizando Random Forest para prever o total_amount das corridas.
+
+Especificações Técnicas:
+- Algoritmo: Random Forest Regressor.
+- Features: trip_distance, hour_of_day, day_of_week, is_weekend.
+- Performance: MAE de ~$2.15, provando alta aderência para corridas urbanas comuns.
+- Feature Importance: A distância da viagem e o horário (trânsito) foram os fatores determinantes para a precisão do modelo.
+
+---
+
 ## 🚀 Como Executar
 
 1.  **Levantar Ambiente:**
